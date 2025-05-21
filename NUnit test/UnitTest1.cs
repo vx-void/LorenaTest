@@ -10,13 +10,13 @@ namespace NUnit_test
         private DB _db;
         private List<Salon> _salonList;
         private Dictionary<string, string> _salonDictionary;
-
+        private string _connectionString;
 
         [SetUp]
         public void Setup()
         {
-            string connectionString = "Data Source=Test.db;Version=3;";
-            _db = new DB(connectionString);
+            _connectionString = "Data Source=Test.db;Version=3;";
+            _db = new DB(_connectionString);
 
 
             _salonDictionary = new Dictionary<string, string>
@@ -88,6 +88,10 @@ namespace NUnit_test
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Test]
         public void InsertParentIdInDB()
         {
@@ -97,6 +101,29 @@ namespace NUnit_test
                 _db.UpdateParentId(kv.Key, kv.Value);
             }
             
+        }
+
+
+        /// <summary>
+        /// Проверка ограничения в 124 символа для описания
+        /// </summary>
+        [TestCase(1)]
+        [TestCase(50)]
+        [TestCase(124)]
+        [TestCase(255)]
+        public void UpdateDescription(int lengthDescription)
+        {
+            string query = "UPDATE Salon SET Description = @text WHERE Id = 1";
+            using (var connect = new SQLiteConnection(_connectionString))
+            {
+                connect.Open();
+                string st = new string('A', lengthDescription);
+                using (var command = new SQLiteCommand(query, connect))
+                {
+                     command.Parameters.AddWithValue("@text", st);
+                     command.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

@@ -42,11 +42,11 @@ namespace LorenaTest
         /// Итоговая цена после применения комбинированной скидки.
         /// Если родительский салон существует, применяется сумма скидок текущего и родительского салонов.
         /// </returns>
-        public double GetPriceCalculate(double price, double? parentDiscount )
+        public static double GetPriceCalculate(double price, double discount, double? parentDiscount )
         {
             if (parentDiscount == null) 
                 parentDiscount = 0;
-            return price - (price * ((Discount + (double)parentDiscount) / 100));
+            return price - (price * ((discount + (double)parentDiscount) / 100));
         }
 
     }

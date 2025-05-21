@@ -23,12 +23,25 @@ namespace LorenaTest
                 new Salon("Курган", 11, false, "Описание Курган", null)
             };
 
+            Dictionary<string,string> salonDictionary = new Dictionary<string, string>
+            {
+                { "Миасс" , null },
+                { "Амелия" , "Миасс" },
+                {"Тест1", "Амелия" },
+                {"Тест2", "Миасс"  },
+                {"Курган", null }
+
+            };
+
             foreach (var salon in SalonList)
             {
                 db.Insert(salon);
             }
 
-
+            foreach(var kv in salonDictionary)
+            {
+                db.UpdateParentId(kv.Key, kv.Value);
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ namespace LorenaTest
                     "Name TEXT NOT NULL, " +
                     "Discount REAL NOT NULL, " +
                     "HasDependency INTEGER NOT NULL, " +
-                    "Description TEXT, " +
+                    "Description TEXT CHECK(LENGTH(Description) <= 124), " +
                     "ParentID INTEGER); ";
 
                 string finalTable = @"CREATE TABLE IF NOT EXISTS " +
@@ -146,9 +146,7 @@ namespace LorenaTest
                         command.Parameters.AddWithValue("@name", name);
                         command.ExecuteNonQuery();
                     }
-                    
                 }
-
             }
         }
 
