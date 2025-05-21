@@ -103,6 +103,17 @@ namespace NUnit_test
             
         }
 
+        [Test]
+        public void Calculate()
+        {
+           
+        }
+
+
+
+
+
+
 
         /// <summary>
         /// Проверка ограничения в 124 символа для описания
