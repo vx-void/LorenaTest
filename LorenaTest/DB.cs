@@ -92,7 +92,7 @@ namespace LorenaTest
             using(var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string query = @"SELECT parentId From Salon Where SalonId = @SalonId";
+                string query = @"SELECT parentId FROM Salon WHERE SalonId = @SalonId";
                 using(var command = new SQLiteCommand(query, connection))
                 {
                     command.CommandText = query;
@@ -114,7 +114,7 @@ namespace LorenaTest
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                string query = @"SELECT Id From Salon Where Name = @name";
+                string query = @"SELECT Id FROM Salon WHERE Name = @name";
                 using (var command = new SQLiteCommand(query, connection))
                 {
                     command.CommandText = query;
@@ -157,7 +157,6 @@ namespace LorenaTest
         /// <param name="connection"></param>
         /// <param name="query"></param>
         /// <param name="parameters"></param>
-
         private void ExecuteNonQuery(SQLiteConnection connection, string query, SQLiteParameter[] parameters = null)
         {
             using (var command = new SQLiteCommand(query, connection))
@@ -168,11 +167,6 @@ namespace LorenaTest
                 }
                 command.ExecuteNonQuery();
             }
-        }
-
-
-        
-
+        }     
     }
-
 }

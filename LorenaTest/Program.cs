@@ -13,35 +13,8 @@ namespace LorenaTest
         {
             DB db = new DB("Data Source=LorenaTest.db;Version=3");
             db.Create();
-
-            List<Salon> SalonList = new List<Salon>
-            {
-                new Salon("Миасс", 4, false, "Описание Миасс", null),
-                new Salon("Амелия", 5, true, "Описание Амелия", null),
-                new Salon("Тест1", 2, true, "Описание Тест1", null),
-                new Salon("Тест2", 0, true, "Описание Тест2", null),
-                new Salon("Курган", 11, false, "Описание Курган", null)
-            };
-
-            Dictionary<string,string> salonDictionary = new Dictionary<string, string>
-            {
-                { "Миасс" , null },
-                { "Амелия" , "Миасс" },
-                {"Тест1", "Амелия" },
-                {"Тест2", "Миасс"  },
-                {"Курган", null }
-
-            };
-
-            foreach (var salon in SalonList)
-            {
-                db.Insert(salon);
-            }
-
-            foreach(var kv in salonDictionary)
-            {
-                db.UpdateParentId(kv.Key, kv.Value);
-            }
+            DataFilling.DefaultData(db); //Заполнение данными по умолчанию
+          
         }
     }
 }
