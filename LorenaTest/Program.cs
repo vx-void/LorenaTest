@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +12,15 @@ namespace LorenaTest
     {
         static void Main(string[] args)
         {
-            DB db = new DB("Data Source=LorenaTest.db;Version=3");
-            db.Create();
-            DataInitialize.DefaultData(db);
+
+            string dbFile = "LorenaTest.db";
+            DB db = new DB($"Data Source={dbFile};Version=3");
+            if (!File.Exists(dbFile))
+            {
+                db.Create();
+                DataInitialize.DefaultData(db);
+            }
+            
             
             int count = db.SelectCountFromSalon();
             
@@ -22,8 +29,10 @@ namespace LorenaTest
             {
                 int salonId = i;
                 Salon salon = db.SelectSalonById(i);
+
                 Console.Write($"Введите цену для {salon.Name}: ");
                 double price = Convert.ToDouble(Console.ReadLine());
+
                 int discount = salon.Discount;
                 int parentDiscount = 0;
                 if(salon.HasDependency)

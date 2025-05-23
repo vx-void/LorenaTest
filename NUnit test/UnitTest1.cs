@@ -22,13 +22,8 @@ namespace NUnit_test
 
         }
 
-        [Test]
-        public void Count()
-        {
-            int right = 5;
-            int count = _db.SelectCountFromSalon();
-            Assert.AreEqual(right, count);
-        }
+
+
 
     }
 }

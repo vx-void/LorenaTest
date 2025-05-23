@@ -36,12 +36,12 @@ namespace LorenaTest
             ParentId = parentId;
         }
 
-        public static double GetPriceCalculate(double price, int discount, int? parentDiscount)
-        {
-            if (parentDiscount == null)
-                parentDiscount = 0;
-            return price - (price * ((discount + (double)parentDiscount) / 100));
+        public static double GetPriceCalculate(double price, int discount, int parentDiscount) 
+        { 
+            double result = price - (price * ((double)(discount + parentDiscount) / 100));
+            return result;
         }
+        
 
 
         public int GetDiscount(int id)

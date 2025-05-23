@@ -116,8 +116,8 @@ namespace LorenaTest
            
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                string query = @"INSERT INTO CalculationTable(SalonId, Price, ParentDiscount, FinalPrice) " +
-               "VALUES(@salonId, @price, @parentalDiscount, @finalPrice) ";
+                string query = @"INSERT OR REPLACE INTO CalculationTable(SalonId, Price, ParentDiscount, FinalPrice) " +
+               "VALUES(@salonId, @price, @parentalDiscount, @finalPrice)";
                 connection.Open();
                 ExecuteNonQuery(connection, query, new SQLiteParameter[]
                     {
@@ -164,7 +164,7 @@ namespace LorenaTest
             int count = 0;
             using (var connection = new SQLiteConnection(_connectionString))
             {
-                string query = @"SELECT COUNT(id) FROM Salon";
+                string query = "SELECT COUNT(*) FROM Salon";
                 connection.Open();
                 using(var command = new SQLiteCommand(query,connection))
                 {
