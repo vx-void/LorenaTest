@@ -40,6 +40,8 @@ namespace LorenaTest
                 double finalprice = Salon.GetPriceCalculate(price, discount, parentDiscount);                
                 db.InsertCalculateTable(salonId, price, parentDiscount, finalprice);
                
+
+
             }
         }
     }
