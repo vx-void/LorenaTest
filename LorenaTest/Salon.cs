@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.SQLite;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -15,7 +16,7 @@ namespace LorenaTest
         public string Name { get; private set; }
 
         [Range(0, 100)]
-        public double Discount { get; private set; }
+        public int Discount { get; private set; }
         public bool HasDependency { get; private set; }
 
         [MaxLength(124)]
@@ -23,8 +24,11 @@ namespace LorenaTest
 
         public int? ParentId { get; private set; }
 
-        public Salon(string name, double discount, bool hasDependency, string description, int? parentId)
+        private DB _db { get; set; }
+
+        public Salon(DB db, string name, int discount, bool hasDependency, string description, int? parentId)
         {
+            _db = db;
             Name = name;
             Discount = discount;
             HasDependency = hasDependency;
@@ -32,26 +36,19 @@ namespace LorenaTest
             ParentId = parentId;
         }
 
-
-
-        /// <summary>
-        /// Рассчитывает итоговую цену с учетом скидки текущего салона и родительского салона (если есть)
-        /// </summary>
-        /// <param name="price">Исходная цена без скидки</param>
-        /// <param name="discount">Скидка салона</param>
-        /// <param name="parentDiscount">Скидка родительского салона</param>
-        /// <returns>
-        /// Итоговая цена после применения комбинированной скидки.
-        /// Если родительский салон существует, применяется сумма скидок текущего и родительского салонов.
-        /// </returns>
-        public static double GetPriceCalculate(double price, double discount, double? parentDiscount )
+        public static double GetPriceCalculate(double price, int discount, int? parentDiscount)
         {
-            if (parentDiscount == null) 
+            if (parentDiscount == null)
                 parentDiscount = 0;
             return price - (price * ((discount + (double)parentDiscount) / 100));
         }
 
-    }
-    
 
+        public int GetDiscount(int id)
+        {
+            return _db.SelectSalonById(id).Discount;
+        }
+    }
 }
+   
+

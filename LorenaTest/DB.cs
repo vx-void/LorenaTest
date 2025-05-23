@@ -1,28 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.SQLite;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LorenaTest
 {
     public class DB
     {
         private readonly string _connectionString;
-
         public DB(string connectionString)
         {
             _connectionString = connectionString;
         }
-
-
-        /// <summary>
-        /// Создает таблицы в базе данных.
-        /// </summary>
         public void Create()
         {
             using(var connection = new SQLiteConnection(_connectionString))
@@ -54,12 +42,6 @@ namespace LorenaTest
                 }              
             }
         }
-
-
-        /// <summary>
-        /// добавление салона в таблицу БД
-        /// </summary>
-        /// <param name="salon">Салон</param>
         public void Insert(Salon salon)
         {
             using (var connection = new SQLiteConnection(_connectionString))
@@ -79,57 +61,6 @@ namespace LorenaTest
                 });
             }
         }
-
-
-        /// <summary>
-        /// Выбор родительсмкого салона
-        /// </summary>
-        /// <param name="salonId">ID салона</param>
-        /// <returns>ID родительского салона</returns>
-        public int SelectParent(int salonId)
-        {
-            int parentId = -1;
-            using(var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string query = @"SELECT parentId FROM Salon WHERE SalonId = @SalonId";
-                using(var command = new SQLiteCommand(query, connection))
-                {
-                    command.CommandText = query;
-                    command.Parameters.Add(new SQLiteParameter("@SalonId", salonId));
-                    var result = command.ExecuteScalar();                    
-                    if(result != null && result != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(result);
-                    }
-                }
-            }
-            return parentId;
-        }
-        
-
-        public int? SelectParentId(string name)
-        {
-            int? parentId = null;
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                string query = @"SELECT Id FROM Salon WHERE Name = @name";
-                using (var command = new SQLiteCommand(query, connection))
-                {
-                    command.CommandText = query;
-                    command.Parameters.Add(new SQLiteParameter("@name", name));
-                    var result = command.ExecuteScalar();
-                    if (result != null && result != DBNull.Value)
-                    {
-                        parentId = Convert.ToInt32(result);
-                    }
-                }
-            }
-            return parentId;
-        }
-
-
         public void UpdateParentId(string name, string parentName)
         {
             if(parentName != null)
@@ -149,14 +80,56 @@ namespace LorenaTest
                 }
             }
         }
+        public Salon SelectSalonById(int Id)
+        {
+            Salon salon = null;
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+               
+                connection.Open();
+                string query = @"SELECT * FROM Salon WHERE Id = @Id";
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    command.CommandText = query;
+                    command.Parameters.Add(new SQLiteParameter("@Id", Id));
 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            salon = new Salon(
+                                db: this,
+                                name: reader["Name"].ToString(),
+                                discount: Convert.ToInt32(reader["Discount"]),
+                                hasDependency: Convert.ToBoolean(reader["HasDependency"]),
+                                description: reader["Description"].ToString(),
+                                parentId: reader["ParentId"] != DBNull.Value ? Convert.ToInt32(reader["ParentId"]) : (int?)null
+                            );
+                        }
+                    }                      
+                }
+            }
+            return salon;
+        }
+        public void InsertCalculateTable(int salonId,  double price, int parentalDiscount, double finalPrice)
+        {
+           
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                string query = @"INSERT INTO CalculationTable(SalonId, Price, ParentDiscount, FinalPrice) " +
+               "VALUES(@salonId, @price, @parentalDiscount, @finalPrice) ";
+                connection.Open();
+                ExecuteNonQuery(connection, query, new SQLiteParameter[]
+                    {
+                        new SQLiteParameter("@salonId", salonId),
+                        new SQLiteParameter("@price", price),
+                        new SQLiteParameter("@parentalDiscount", parentalDiscount),
+                        new SQLiteParameter("@finalPrice", finalPrice)
+                    }
+                    );
+            }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="query"></param>
-        /// <param name="parameters"></param>
+        }
         private void ExecuteNonQuery(SQLiteConnection connection, string query, SQLiteParameter[] parameters = null)
         {
             using (var command = new SQLiteCommand(query, connection))
@@ -168,5 +141,41 @@ namespace LorenaTest
                 command.ExecuteNonQuery();
             }
         }     
+
+        public string SelectName(int id)
+        {
+            string name = "";
+            using(var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Name FROM Salon WHERE Id == @id";
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    name = command.ExecuteScalar().ToString();
+                }
+
+            }
+            return name;
+        }
+
+        public int SelectCountFromSalon()
+        {
+            int count = 0;
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                string query = @"SELECT COUNT(id) FROM Salon";
+                connection.Open();
+                using(var command = new SQLiteCommand(query,connection))
+                {
+                    count = Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+            return count;
+        }
+
+
+
+
     }
 }
